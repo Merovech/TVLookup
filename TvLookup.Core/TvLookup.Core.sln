@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31829.152
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvLookup.Core", "TvLookup.Core\TvLookup.Core.csproj", "{DCCDEFA7-0308-4788-94A4-C8B882350803}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvLookup.UI", "..\TvLookup.UI\TvLookup.UI.csproj", "{7EE3E9F6-20F8-40A1-ACDC-BBE6022BE24D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DCCDEFA7-0308-4788-94A4-C8B882350803}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCCDEFA7-0308-4788-94A4-C8B882350803}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCCDEFA7-0308-4788-94A4-C8B882350803}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCCDEFA7-0308-4788-94A4-C8B882350803}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EE3E9F6-20F8-40A1-ACDC-BBE6022BE24D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EE3E9F6-20F8-40A1-ACDC-BBE6022BE24D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EE3E9F6-20F8-40A1-ACDC-BBE6022BE24D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EE3E9F6-20F8-40A1-ACDC-BBE6022BE24D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2E711615-AD15-40CA-8A9A-6049CCD09812}
+	EndGlobalSection
+EndGlobal
