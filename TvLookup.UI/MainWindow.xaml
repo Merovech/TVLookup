@@ -7,6 +7,11 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-
+		<StackPanel>
+			<TextBlock>Temporary testing harness until I get unit tests up.</TextBlock>
+			<TextBox x:Name="tmpInput" />
+			<Button x:Name="tmpSubmit" Click="OnClick" Content="Test API" />
+		</StackPanel>
+		
     </Grid>
 </Window>
