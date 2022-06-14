@@ -6,4 +6,8 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TvLookup.Core\TvLookup.Core.csproj" />
+  </ItemGroup>
+
 </Project>
