@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Windows;
+using Microsoft.Extensions.Logging;
 using TvLookup.Core.Services.Implementations;
 
 namespace TvLookup.UI
@@ -9,9 +10,10 @@ namespace TvLookup.UI
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		public MainWindow()
+		public MainWindow(ILogger<MainWindow> logger)
 		{
 			InitializeComponent();
+			logger.LogDebug("Hello, world");
 		}
 
 		// Temporary, just to test out the API
