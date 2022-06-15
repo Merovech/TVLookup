@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Windows;
 using Microsoft.Extensions.Logging;
+using TvLookup.Core;
 using TvLookup.Core.Services.Interfaces;
 
 namespace TvLookup.UI
@@ -8,11 +9,12 @@ namespace TvLookup.UI
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
+	[DependencyInjectionType(DependencyInjectionType.Other)]
 	public partial class MainWindow : Window
 	{
 		private readonly IApiService _apiService;
 
-		public MainWindow(ILogger<MainWindow> logger, IApiService apiService)
+		public MainWindow(IApiService apiService)
 		{
 			_apiService = apiService;
 			InitializeComponent();

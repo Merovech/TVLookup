@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -14,9 +13,10 @@ namespace TvLookup.Core.Services.Implementations
 	/// <summary>
 	/// Implementation of portions of the TvMaze API
 	/// </summary>
+	[DependencyInjectionType(DependencyInjectionType.Service)]
 	public class ApiService : ServiceBase<ApiService>, IApiService
 	{
-		private static HttpClient Client = new();
+		private static readonly HttpClient Client = new();
 		private const string ROOT_URL = "https://api.tvmaze.com";
 
 		public ApiService(ILogger<ApiService> logger) : base(logger)
