@@ -11,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using TvLookup.Core.Services.Implementations;
+using TvLookup.Core.Services.Interfaces;
 
 namespace TvLookup.UI
 {
@@ -46,7 +48,8 @@ namespace TvLookup.UI
 
 		private static void RegisterInjectables(IServiceCollection serviceCollection)
 		{
-			// TODO: Add injectables here
+			// TODO: Expand this to use reflection, since we may have a bunch of injectables.
+			serviceCollection.AddTransient<IApiService, ApiService>();
 			serviceCollection.AddSingleton<MainWindow>();
 		}
 	}
