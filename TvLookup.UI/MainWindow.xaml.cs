@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Windows;
-using TvLookup.Core.Services.Implementations;
+using Microsoft.Extensions.Logging;
+using TvLookup.Core.Services.Interfaces;
 
 namespace TvLookup.UI
 {
@@ -9,23 +10,24 @@ namespace TvLookup.UI
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		public MainWindow()
+		private readonly IApiService _apiService;
+
+		public MainWindow(ILogger<MainWindow> logger, IApiService apiService)
 		{
+			_apiService = apiService;
 			InitializeComponent();
 		}
 
 		// Temporary, just to test out the API
 		private async void OnClick(object sender, RoutedEventArgs e)
 		{
-			ApiService svc = new ApiService();
-
 			// All of this is dumped into the debug window for the time being.  Until the Core functionality
 			// is fleshed out, the UI will serve only to allow me to do live tests.  Eventually those tests
 			// wil go into unit tests and this will turn into an MVVM WPF UI.
-			var shows = await svc.FindShow(this.tmpInput.Text);
+			var shows = await _apiService.FindShow(this.tmpInput.Text);
 			if (shows.Any())
 			{
-				var episodes = await svc.GetEpisodes(shows.First().Id);
+				var episodes = await _apiService.GetEpisodes(shows.First().Id);
 			}
 		}
 	}

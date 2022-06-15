@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using TvLookup.Core.Models;
 using TvLookup.Core.Services.Interfaces;
 
@@ -13,11 +14,14 @@ namespace TvLookup.Core.Services.Implementations
 	/// <summary>
 	/// Implementation of portions of the TvMaze API
 	/// </summary>
-	// TODO: Logging
-	public class ApiService : IApiService
+	public class ApiService : ServiceBase<ApiService>, IApiService
 	{
 		private static HttpClient Client = new();
 		private const string ROOT_URL = "https://api.tvmaze.com";
+
+		public ApiService(ILogger<ApiService> logger) : base(logger)
+		{
+		}
 
 		public async Task<List<TvShow>> FindShow(string searchString)
 		{
@@ -29,12 +33,7 @@ namespace TvLookup.Core.Services.Implementations
 			// really hurt.
 			var shows = results.Select(res => res.Show).ToList();
 
-			// TODO: Again, logging
-			foreach (var s in shows)
-			{
-				Debug.WriteLine(s.ToString());
-			}
-
+			Logger.LogInformation("Found {count} shows.", shows.Count);
 			return shows;
 		}
 
@@ -43,12 +42,7 @@ namespace TvLookup.Core.Services.Implementations
 			var apiPath = $"/shows/{showId}/episodes";
 			var results = await ExecuteApi<List<TvShowEpisode>>(apiPath);
 
-			// TODO: Again, logging
-			foreach (var r in results)
-			{
-				Debug.WriteLine(r.ToString());
-			}
-
+			Logger.LogInformation("Found {count} episodes.", results.Count);
 			return results;
 		}
 
