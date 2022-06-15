@@ -7,7 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TvLookup.Core", "TvLookup.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TvLookup.UI", "TvLookup.UI\TvLookup.UI.csproj", "{6F83BD82-1208-48E6-972B-724BCE5E715A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvLookup.Core.UnitTests", "TvLookup.Core.UnitTests\TvLookup.Core.UnitTests.csproj", "{F81EE157-DE32-4B97-86B2-03214AD8FD9B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TvLookup.Core.UnitTests", "TvLookup.Core.UnitTests\TvLookup.Core.UnitTests.csproj", "{F81EE157-DE32-4B97-86B2-03214AD8FD9B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9721AD55-EE00-4031-9BA9-E6BB7E673A07}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
