@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Windows;
-using Microsoft.Extensions.Logging;
 using TvLookup.Core;
 using TvLookup.Core.Services.Interfaces;
 
