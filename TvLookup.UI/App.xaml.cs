@@ -62,33 +62,43 @@ namespace TvLookup.UI
 			var injectables = GetAllReferencedAssemblyTypes();
 			var interfaceList = new List<Type>();
 			var implementationList = new List<Type>();
+			var singletonList = new List<Type>();
 			var otherList = new List<Type>();
 
-			foreach (var i in injectables)
+			foreach (var inj in injectables)
 			{
-				AddTypeForInjection(i, interfaceList, implementationList, otherList);
+				AddTypeForInjection(inj, interfaceList, implementationList, singletonList, otherList);
 			}
 
 			// We can do this in one loop, using the larger of the interface and other lists as our counter.
 			// We're taking advantage of the fact that interfaces and implementations should have the same name,
 			// on with an I prefix on the interface.  So they can be done in parallel.
-			for (int i = 0; i < Math.Max(interfaceList.Count, otherList.Count); i++)
+			int i = 0;
+			while (i < interfaceList.Count || i < singletonList.Count || i < otherList.Count)
 			{
 				if (i < interfaceList.Count)
 				{
-					logger.Log(NLog.LogLevel.Info, "DI Registration: {interfacename}, {implementationname}", interfaceList[i].Name, implementationList[i].Name);
+					logger.Log(NLog.LogLevel.Info, "DI Registration: {interfacename}, {implementationname} (interface)", interfaceList[i].Name, implementationList[i].Name);
 					serviceCollection.AddTransient(interfaceList[i], implementationList[i]);
+				}
+
+				if (i < singletonList.Count)
+				{
+					logger.Log(NLog.LogLevel.Info, "DI Registration: {injectable} (singleton)", singletonList[i].Name);
+					serviceCollection.AddSingleton(singletonList[i]);
 				}
 
 				if (i < otherList.Count)
 				{
-					logger.Log(NLog.LogLevel.Info, "DI Registration: {service}", otherList[i].Name);
+					logger.Log(NLog.LogLevel.Info, "DI Registration: {injectable} (other)", otherList[i].Name);
 					serviceCollection.AddTransient(otherList[i]);
 				}
+
+				i++;
 			}
 		}
 
-		private static void AddTypeForInjection(Type t, List<Type> interfaceList, List<Type> implementationList, List<Type> otherList)
+		private static void AddTypeForInjection(Type t, List<Type> interfaceList, List<Type> implementationList, List<Type> singletonList, List<Type> otherList)
 		{
 			// Check to see if there's a DependencyInjectionType attribute
 			var attribute = t.GetCustomAttribute<DependencyInjectionTypeAttribute>();
@@ -105,6 +115,10 @@ namespace TvLookup.UI
 
 				case DependencyInjectionType.Interface:
 					interfaceList.Add(t);
+					break;
+
+				case DependencyInjectionType.Singleton:
+					singletonList.Add(t);
 					break;
 
 				case DependencyInjectionType.Other:

@@ -5,6 +5,7 @@
 		None,
 		Service,
 		Interface,
+		Singleton,
 		Other
 	}
 }

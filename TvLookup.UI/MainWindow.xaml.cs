@@ -9,7 +9,7 @@ namespace TvLookup.UI
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	[DependencyInjectionType(DependencyInjectionType.Other)]
+	[DependencyInjectionType(DependencyInjectionType.Singleton)]
 	public partial class MainWindow : Window
 	{
 		private readonly IApiService _apiService;
