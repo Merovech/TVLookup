@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NLog;
 using NLog.Extensions.Logging;
 using TvLookup.Core;
-using TvLookup.Core.Services.Implementations;
-using TvLookup.Core.Services.Interfaces;
 
 namespace TvLookup.UI
 {
@@ -29,20 +25,35 @@ namespace TvLookup.UI
 			"TvLookup.UI"
 		};
 
-		public static IServiceProvider ServiceProvider
+		public IServiceProvider ServiceProvider
 		{
 			get; 
 			private set;
 		}
 
+		public IConfiguration Configuration
+		{
+			get;
+			private set;
+		}
+
+
+
 		public App()
 		{
+			var configBuilder = new ConfigurationBuilder()
+				.SetBasePath(Directory.GetCurrentDirectory())
+				.AddJsonFile("appsettings.json", false, true);
+
+			Configuration = configBuilder.Build();
+			LogManager.Configuration = new NLogLoggingConfiguration(Configuration.GetSection("NLog"));
+			
 			var serviceCollection = new ServiceCollection();
 			serviceCollection.AddLogging(builder =>
 			{
 				builder.ClearProviders();
-				builder.SetMinimumLevel(LogLevel.Trace);
-				builder.AddNLog("nlog.config");
+				builder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+				builder.AddNLog();
 			});
 
 			RegisterInjectables(serviceCollection);
@@ -57,7 +68,7 @@ namespace TvLookup.UI
 
 		private void RegisterInjectables(IServiceCollection serviceCollection)
 		{
-			var logger = NLog.LogManager.GetCurrentClassLogger();
+			var logger = LogManager.GetCurrentClassLogger();
 
 			var injectables = GetAllReferencedAssemblyTypes();
 			var interfaceList = new List<Type>();
