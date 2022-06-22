@@ -18,7 +18,7 @@ namespace TvLookup.Core.Models
 		}
 
 		[JsonPropertyName("name")]
-		public string Name
+		public string Title
 		{
 			get; set;
 		}
@@ -42,13 +42,13 @@ namespace TvLookup.Core.Models
 		}
 
 		[JsonPropertyName("premiered")]
-		public DateTime? Premiered
+		public DateTime? PremiereDate
 		{
 			get; set;
 		}
 
 		[JsonPropertyName("ended")]
-		public DateTime? Ended
+		public DateTime? EndDate
 		{
 			get; set;
 		}
@@ -63,7 +63,7 @@ namespace TvLookup.Core.Models
 		// TODO: Remove this, maybe.
 		public override string ToString()
 		{
-			return $"{Name} ({Premiered?.Year.ToString() ?? "unknown"}-{Ended?.Year})";
+			return $"{Title} ({PremiereDate?.Year.ToString() ?? "unknown"}-{EndDate?.Year})";
 		}
 	}
 }

@@ -17,19 +17,19 @@ namespace TvLookup.Core.Models
 		}
 
 		[JsonPropertyName("name")]
-		public string Name
+		public string Title
 		{
 			get; set;
 		}
 
 		[JsonPropertyName("season")]
-		public int Season
+		public int SeasonNumber
 		{
 			get; set;
 		}
 
 		[JsonPropertyName("number")]
-		public int Number
+		public int EpisodeNumber
 		{
 			get; set;
 		}
@@ -56,7 +56,7 @@ namespace TvLookup.Core.Models
 		// TODO: Remove this, maybe.
 		public override string ToString()
 		{
-			return $"S{Season:00}E{Number:00}: {Name} ({AirDate:MM/dd/yyyy})";
+			return $"S{SeasonNumber:00}E{EpisodeNumber:00}: {Title} ({AirDate:MM/dd/yyyy})";
 		}
 	}
 }

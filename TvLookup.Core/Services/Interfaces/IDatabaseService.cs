@@ -7,9 +7,9 @@ namespace TvLookup.Core.Services.Interfaces
 	[DependencyInjectionType(DependencyInjectionType.Interface)]
 	public interface IDatabaseService
 	{
-		Task<TvShow> GetShow();
+		Task<TvShow> GetShow(int id);
 
-		Task<TvShowEpisode> GetEpisode();
+		Task<TvShowEpisode> GetEpisode(int showId, int seasonNumber, int episodeNumber);
 
 		Task AddShow(TvShow show);
 
