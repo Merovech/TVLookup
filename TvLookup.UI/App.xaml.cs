@@ -4,6 +4,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using NLog;
 using NLog.Extensions.Logging;
 using TvLookup.Core;
+using TvLookup.Core.Services.Interfaces;
 
 namespace TvLookup.UI
 {
@@ -62,6 +64,21 @@ namespace TvLookup.UI
 
 		private void OnStartup(object sender, StartupEventArgs e)
 		{
+			var logger = LogManager.GetCurrentClassLogger();
+
+			// TODO: Global constant for filename through config
+			if (!File.Exists("tvlookup.db"))
+			{
+				logger.Log(NLog.LogLevel.Info, "No database found.");
+				var dbsvc = ServiceProvider.GetService<IDatabaseService>();
+				Task.Run(async () => await dbsvc.CreateDatabase()).Wait();
+			}
+			else
+			{
+				logger.Log(NLog.LogLevel.Info, "Found existing database.");
+			}
+
+			logger.Log(NLog.LogLevel.Info, "Starting main window.");
 			var mainWindow = ServiceProvider.GetService<MainWindow>();
 			mainWindow.Show();
 		}
