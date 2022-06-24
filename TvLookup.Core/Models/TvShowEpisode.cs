@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Text.Json.Serialization;
 
-namespace TvLookup.Core.Models.Api
+namespace TvLookup.Core.Models
 {
 	/// <summary>
 	/// Minimal set of properties from the TVMaze API that the app uses.  In general there's a lot more here,
@@ -10,43 +9,41 @@ namespace TvLookup.Core.Models.Api
 	/// </summary>
 	public class TvShowEpisode
 	{
-		[JsonPropertyName("id")]
 		public int Id
 		{
 			get; set;
 		}
 
-		[JsonPropertyName("name")]
+		public int ApiId
+		{
+			get; set;
+		}
+
 		public string Title
 		{
 			get; set;
 		}
 
-		[JsonPropertyName("season")]
 		public int SeasonNumber
 		{
 			get; set;
 		}
 
-		[JsonPropertyName("number")]
 		public int EpisodeNumber
 		{
 			get; set;
 		}
 
-		[JsonPropertyName("type")]
 		public string Type
 		{
 			get; set;
 		}
 
-		[JsonPropertyName("airdate")]
 		public DateTime AirDate
 		{
 			get; set;
 		}
 
-		[JsonPropertyName("summary")]
 		public string Summary
 		{
 			get; set;

@@ -15,7 +15,6 @@ namespace TvLookup.Core.Services.Implementations
 	{
 		// TODO: Consider EFCore
 		// TODO: Turn the connection string into options
-		private const string CONN_STR = "Data Source=tvlookup.db;";
 		private readonly ILogger _logger;
 
 		public DatabaseService(ILogger<DatabaseService> logger) : base(logger)
