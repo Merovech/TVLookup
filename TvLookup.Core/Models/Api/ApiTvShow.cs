@@ -9,7 +9,7 @@ namespace TvLookup.Core.Models.Api
 	/// but as the app currently doesn't need it they'll just clutter the data with useless information.  When
 	/// a new feature demands a property that isn't here, we can add it and it will automaticall be deserialized.
 	/// </summary>
-	public class TvShow
+	public class ApiTvShow
 	{
 		[JsonPropertyName("id")]
 		public int Id

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 
-namespace TvLookup.Core.Models
+namespace TvLookup.Core.Models.Api
 {
 	/// <summary>
 	/// Minimal set of properties from the TVMaze API that the app uses.  In general there's a lot more here,

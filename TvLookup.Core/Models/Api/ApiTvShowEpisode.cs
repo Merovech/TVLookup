@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace TvLookup.Core.Models.Api
@@ -9,7 +8,7 @@ namespace TvLookup.Core.Models.Api
 	/// but as the app currently doesn't need it they'll just clutter the data with useless information.  When
 	/// a new feature demands a property that isn't here, we can add it and it will automaticall be deserialized.
 	/// </summary>
-	public class TvShow
+	public class ApiTvShowEpisode
 	{
 		[JsonPropertyName("id")]
 		public int Id
@@ -23,32 +22,26 @@ namespace TvLookup.Core.Models.Api
 			get; set;
 		}
 
+		[JsonPropertyName("season")]
+		public int SeasonNumber
+		{
+			get; set;
+		}
+
+		[JsonPropertyName("number")]
+		public int EpisodeNumber
+		{
+			get; set;
+		}
+
 		[JsonPropertyName("type")]
 		public string Type
 		{
 			get; set;
 		}
 
-		[JsonPropertyName("language")]
-		public string Language
-		{
-			get; set;
-		}
-
-		[JsonPropertyName("genres")]
-		public List<string> Genres
-		{
-			get; set;
-		}
-
-		[JsonPropertyName("premiered")]
-		public DateTime? PremiereDate
-		{
-			get; set;
-		}
-
-		[JsonPropertyName("ended")]
-		public DateTime? EndDate
+		[JsonPropertyName("airdate")]
+		public DateTime AirDate
 		{
 			get; set;
 		}
@@ -63,7 +56,7 @@ namespace TvLookup.Core.Models.Api
 		// TODO: Remove this, maybe.
 		public override string ToString()
 		{
-			return $"{Title} ({PremiereDate?.Year.ToString() ?? "unknown"}-{EndDate?.Year})";
+			return $"S{SeasonNumber:00}E{EpisodeNumber:00}: {Title} ({AirDate:MM/dd/yyyy})";
 		}
 	}
 }

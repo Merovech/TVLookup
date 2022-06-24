@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using TvLookup.Core.Models;
+using TvLookup.Core.Models.Api;
 
 namespace TvLookup.Core.Services.Interfaces
 {
 	[DependencyInjectionType(DependencyInjectionType.Interface)]
 	public interface IDatabaseService
 	{
-		Task<TvShow> GetShow(int id);
+		Task<ApiTvShow> GetShow(int id);
 
-		Task<TvShowEpisode> GetEpisode(int showId, int seasonNumber, int episodeNumber);
+		Task<ApiTvShowEpisode> GetEpisode(int showId, int seasonNumber, int episodeNumber);
 
-		Task AddShow(TvShow show);
+		Task AddShow(ApiTvShow show);
 
-		Task AddEpisodes(IList<TvShowEpisode> episodes);
+		Task AddEpisodes(IList<ApiTvShowEpisode> episodes);
 
 		Task CreateDatabase();
 	}

@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using TvLookup.Core.Models;
+using TvLookup.Core.Models.Api;
 using TvLookup.Core.Services.Interfaces;
 
 namespace TvLookup.Core.Services.Implementations
@@ -23,10 +23,10 @@ namespace TvLookup.Core.Services.Implementations
 		{
 		}
 
-		public async Task<List<TvShow>> FindShow(string searchString)
+		public async Task<List<ApiTvShow>> FindShow(string searchString)
 		{
 			var apiPath = $"/search/shows?q={WebUtility.HtmlEncode(searchString)}";
-			var results = await ExecuteApi<List<TvShowSearchResult>>(apiPath);
+			var results = await ExecuteApi<List<ApiTvShowSearchResult>>(apiPath);
 
 			// Result order is already by relevance, so no need to re-sort.  However, we don't need the score.
 			// Unsure if this is strictly necessary, but we're not dealing with a lot of data here so it can't
@@ -37,10 +37,10 @@ namespace TvLookup.Core.Services.Implementations
 			return shows;
 		}
 
-		public async Task<List<TvShowEpisode>> GetEpisodes(int showId)
+		public async Task<List<ApiTvShowEpisode>> GetEpisodes(int showId)
 		{
 			var apiPath = $"/shows/{showId}/episodes";
-			var results = await ExecuteApi<List<TvShowEpisode>>(apiPath);
+			var results = await ExecuteApi<List<ApiTvShowEpisode>>(apiPath);
 
 			Logger.LogInformation("Found {count} episodes.", results.Count);
 			return results;
