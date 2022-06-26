@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TvLookup.Core.Models;
-using TvLookup.Core.Models.Api;
 
 namespace TvLookup.Core
 {
+	[DependencyInjectionType(DependencyInjectionType.Other)]
 	public class DatabaseContext : DbContext
 	{
 		public DbSet<TvShow> Shows

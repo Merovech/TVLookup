@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TvLookup.Core.Models
 {
@@ -19,7 +20,18 @@ namespace TvLookup.Core.Models
 			get; set;
 		}
 
+		public int ShowId
+		{
+			get; set;
+		}
+
 		public string Title
+		{
+			get; set;
+		}
+
+		[ForeignKey(nameof(ShowId))]
+		public virtual TvShow Show
 		{
 			get; set;
 		}
