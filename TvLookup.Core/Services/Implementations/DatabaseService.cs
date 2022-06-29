@@ -11,7 +11,7 @@ using TvLookup.Core.Services.Interfaces;
 namespace TvLookup.Core.Services.Implementations
 {
 	[DependencyInjectionType(DependencyInjectionType.Service)]
-	internal class DatabaseService : ServiceBase<DatabaseService>, IDatabaseService
+	public class DatabaseService : ServiceBase<DatabaseService>, IDatabaseService
 	{
 		// TODO: Consider EFCore
 		// TODO: Turn the connection string into options
