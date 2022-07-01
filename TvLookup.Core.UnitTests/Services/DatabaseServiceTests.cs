@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using TvLookup.Core.Services.Implementations;
 using TvLookup.Core.Services.Interfaces;
 using TvLookup.Core.UnitTests.Helpers.Builders;
 
 namespace TvLookup.Core.UnitTests.Services
 {
-	// Note that we're not going to test that CreateDatabase() works, since it's used in InitializeTest() for everything
-	// except for the constructor tests.
 	[TestClass]
 	public  class DatabaseServiceTests : TestBase<IDatabaseService, DatabaseServiceBuilder>
 	{
@@ -20,11 +19,16 @@ namespace TvLookup.Core.UnitTests.Services
 		[TestInitialize]
 		public virtual void InitializeTest()
 		{
-			Builder = new DatabaseServiceBuilder();
-			Target = Builder.Build();
+			var options = new DbContextOptionsBuilder<DatabaseContext>()
+				.UseSqlite($"Data Source={DB_NAME};")
+				.Options;
+
+			DatabaseContext ctx = new DatabaseContext(options);
 
 			// Recreate a fresh DB each time
-			Task.Run(() => Target.CreateDatabase()).Wait();
+			Task.Run(() => ctx.Database.MigrateAsync()).Wait();
+
+			Builder = new DatabaseServiceBuilder();
 		}
 
 		[TestCleanup]
@@ -34,6 +38,37 @@ namespace TvLookup.Core.UnitTests.Services
 			if (File.Exists(DB_NAME))
 			{
 				File.Delete(DB_NAME);
+			}
+		}
+
+		[TestClass]
+		public class ConstructorTests : DatabaseServiceTests
+		{
+			[TestMethod]
+			public virtual void Instantiates_Correctly_With_Valid_Values()
+			{
+				Builder.Logger = new Mock<ILogger<DatabaseService>>().Object;
+				Builder.Context = new Mock<DatabaseContext>().Object;
+
+				Builder.Build();
+
+				// If we got here, no issues
+			}
+
+			[TestMethod]
+			[ExpectedException(typeof(ArgumentNullException))]
+			public virtual void Should_Throw_With_Null_Context()
+			{
+				Builder.Logger = new Mock<ILogger<DatabaseService>>().Object;
+				Builder.Build();
+			}
+
+			[TestMethod]
+			[ExpectedException(typeof(ArgumentNullException))]
+			public void Should_Throw_With_Null_Logger()
+			{
+				Builder.Context = new DatabaseContext();
+				Builder.Build();
 			}
 		}
 	}

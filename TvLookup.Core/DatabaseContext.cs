@@ -6,6 +6,14 @@ namespace TvLookup.Core
 	[DependencyInjectionType(DependencyInjectionType.Other)]
 	public class DatabaseContext : DbContext
 	{
+		public DatabaseContext()
+		{
+		}
+
+		public DatabaseContext(DbContextOptions options) : base(options)
+		{
+		}
+
 		public DbSet<TvShow> Shows
 		{
 			get; set;
@@ -23,6 +31,7 @@ namespace TvLookup.Core
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
+			// TODO: Constant, or other setting
 			optionsBuilder.UseSqlite("Data Source = tvlookup.db;");
 		}
 

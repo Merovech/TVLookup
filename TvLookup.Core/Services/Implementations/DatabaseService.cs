@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using TvLookup.Core.Models;
 using TvLookup.Core.Models.Api;
 using TvLookup.Core.Services.Interfaces;
+using TvLookup.Core.Utilities;
 
 namespace TvLookup.Core.Services.Implementations
 {
@@ -20,6 +21,8 @@ namespace TvLookup.Core.Services.Implementations
 
 		public DatabaseService(DatabaseContext context, ILogger<DatabaseService> logger) : base(logger)
 		{
+			Guard.AgainstNull(context, nameof(context));
+			Guard.AgainstNull(logger, nameof(logger));
 			_logger = logger;
 			_dbContext = context;
 		}
