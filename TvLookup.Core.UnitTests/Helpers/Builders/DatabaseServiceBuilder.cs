@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using TvLookup.Core.Services.Interfaces;
+﻿using Microsoft.Extensions.Logging;
 using TvLookup.Core.Services.Implementations;
+using TvLookup.Core.Services.Interfaces;
 
 namespace TvLookup.Core.UnitTests.Helpers.Builders
 {

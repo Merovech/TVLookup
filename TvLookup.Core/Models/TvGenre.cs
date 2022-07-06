@@ -4,6 +4,11 @@ namespace TvLookup.Core.Models
 {
 	public class TvGenre
 	{
+		public TvGenre()
+		{
+			Shows = new();
+		}
+
 		public int Id
 		{
 			get; set;
@@ -14,7 +19,7 @@ namespace TvLookup.Core.Models
 			get; set;
 		}
 
-		public ICollection<TvShowGenre> Shows
+		public List<TvShowGenre> Shows
 		{
 			get; set;
 		}

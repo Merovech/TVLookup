@@ -8,7 +8,7 @@ namespace TvLookup.Core.Utilities
 		{
 			if (obj == null)
 			{
-				throw new ArgumentNullException(nameof(argumentName));
+				throw new ArgumentNullException(argumentName);
 			}
 		}
 	}

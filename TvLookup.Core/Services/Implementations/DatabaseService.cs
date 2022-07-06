@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -40,29 +39,19 @@ namespace TvLookup.Core.Services.Implementations
 
 		public async Task AddShow(ApiTvShow show)
 		{
-			// TODO: There's got to be a better way of dong this
-
-			// First, convert the show and add it to the DB
 			var convertedShow = ConvertApiShow(show);
 			_dbContext.Add(convertedShow);
 			await _dbContext.SaveChangesAsync();
-
-			// Next, convert the genres and add them to the DB
-			List<TvGenre> genres = new();
-			foreach (var g in show.Genres)
-			{
-				genres.Add(await ConvertOrAddGenre(g));
-			}
-
-			// Finally, add the associated TvShowGenres to the DB
-			List<TvShowGenre> showGenres = genres.Select(g => new TvShowGenre { GenreId = g.Id, Genre = g, ShowId = convertedShow.Id, Show = convertedShow }).ToList();
-			await _dbContext.AddRangeAsync(showGenres);
-			_dbContext.SaveChanges();
 		}
 
 		public async Task CreateDatabase()
 		{
 			await _dbContext.Database.MigrateAsync();
+
+			// Necessary since EF core doesn't provide a nice way of handling PRAGMA statements
+			await _dbContext.Database.OpenConnectionAsync();
+			await _dbContext.Database.ExecuteSqlRawAsync("PRAGMA journal_mode=DELETE");
+			await _dbContext.Database.CloseConnectionAsync();
 		}
 
 		public async Task<TvShowEpisode> GetEpisode(int showId, int seasonNumber, int episodeNumber)
@@ -98,9 +87,8 @@ namespace TvLookup.Core.Services.Implementations
 
 		private TvShow ConvertApiShow(ApiTvShow apiShow)
 		{
-			return new TvShow
+			TvShow show = new()
 			{
-				Id = -1,
 				ApiId = apiShow.Id,
 				PremiereDate = apiShow.PremiereDate,
 				EndDate = apiShow.EndDate,
@@ -109,20 +97,35 @@ namespace TvLookup.Core.Services.Implementations
 				Title = apiShow.Title,
 				Type = apiShow.Type
 			};
-		}
 
-		private async Task<TvGenre> ConvertOrAddGenre(string genre)
-		{
-			var foundItem = _dbContext.Genres.FirstOrDefault(g => g.Name == genre);
-			if (foundItem != null)
+			foreach (var g in apiShow.Genres)
 			{
-				// Add it to the DB
-				var addedGenre = _dbContext.Genres.Add(new TvGenre { Name = genre });
-				await _dbContext.SaveChangesAsync();
-				return addedGenre.Entity;
+				// Look to see if the genre already exists in the DB
+				var foundGenre = _dbContext.Genres.FirstOrDefault(dbGenre => dbGenre.Name == g);
+				TvGenre genre = new()
+				{
+					Id = foundGenre == null ? 0 : foundGenre.Id,
+					Name = g,
+				};
+
+				TvShowGenre tsg = new()
+				{
+					Show = show
+				};
+
+				if (foundGenre == null)
+				{
+					tsg.Genre = genre;
+				}
+				else
+				{
+					tsg.GenreId = foundGenre.Id;
+				}
+
+				show.Genres.Add(tsg);
 			}
 
-			return foundItem;
+			return show;
 		}
 	}
 }

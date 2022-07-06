@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using TvLookup.Core.Models;
 
 namespace TvLookup.Core
@@ -6,12 +7,15 @@ namespace TvLookup.Core
 	[DependencyInjectionType(DependencyInjectionType.Other)]
 	public class DatabaseContext : DbContext
 	{
-		public DatabaseContext()
+		private string DatabaseName
 		{
+			get; 
+			set;
 		}
 
-		public DatabaseContext(DbContextOptions options) : base(options)
+		public DatabaseContext(string dbName = null)
 		{
+			DatabaseName = dbName ?? "tvlookup.db";
 		}
 
 		public DbSet<TvShow> Shows
@@ -32,7 +36,7 @@ namespace TvLookup.Core
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			// TODO: Constant, or other setting
-			optionsBuilder.UseSqlite("Data Source = tvlookup.db;");
+			optionsBuilder.UseSqlite($"Data Source={DatabaseName};Pooling=false");
 		}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -10,6 +10,11 @@ namespace TvLookup.Core.Models
 	/// </summary>
 	public class TvShow
 	{
+		public TvShow()
+		{
+			Genres = new();
+		}
+
 		public int Id
 		{
 			get; set;
