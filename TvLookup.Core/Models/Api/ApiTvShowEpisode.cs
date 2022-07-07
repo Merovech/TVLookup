@@ -1,61 +1,52 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
-namespace TvLookup.Core.Models
+namespace TvLookup.Core.Models.Api
 {
 	/// <summary>
 	/// Minimal set of properties from the TVMaze API that the app uses.  In general there's a lot more here,
 	/// but as the app currently doesn't need it they'll just clutter the data with useless information.  When
 	/// a new feature demands a property that isn't here, we can add it and it will automaticall be deserialized.
 	/// </summary>
-	public class TvShowEpisode
+	public class ApiTvShowEpisode
 	{
+		[JsonPropertyName("id")]
 		public int Id
 		{
 			get; set;
 		}
 
-		public int ApiId
-		{
-			get; set;
-		}
-
-		public int ShowId
-		{
-			get; set;
-		}
-
+		[JsonPropertyName("name")]
 		public string Title
 		{
 			get; set;
 		}
 
-		[ForeignKey(nameof(ShowId))]
-		public virtual TvShow Show
-		{
-			get; set;
-		}
-
+		[JsonPropertyName("season")]
 		public int SeasonNumber
 		{
 			get; set;
 		}
 
+		[JsonPropertyName("number")]
 		public int EpisodeNumber
 		{
 			get; set;
 		}
 
+		[JsonPropertyName("type")]
 		public string Type
 		{
 			get; set;
 		}
 
+		[JsonPropertyName("airdate")]
 		public DateTime AirDate
 		{
 			get; set;
 		}
 
+		[JsonPropertyName("summary")]
 		public string Summary
 		{
 			get; set;

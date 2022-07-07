@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace TvLookup.Core.Models
 {
@@ -11,49 +10,51 @@ namespace TvLookup.Core.Models
 	/// </summary>
 	public class TvShow
 	{
-		[JsonPropertyName("id")]
+		public TvShow()
+		{
+			Genres = new();
+		}
+
 		public int Id
 		{
 			get; set;
 		}
 
-		[JsonPropertyName("name")]
-		public string Name
+		public int ApiId
 		{
 			get; set;
 		}
 
-		[JsonPropertyName("type")]
+		public string Title
+		{
+			get; set;
+		}
+
 		public string Type
 		{
 			get; set;
 		}
 
-		[JsonPropertyName("language")]
 		public string Language
 		{
 			get; set;
 		}
 
-		[JsonPropertyName("genres")]
-		public List<string> Genres
+		public List<TvShowGenre> Genres
 		{
 			get; set;
 		}
 
-		[JsonPropertyName("premiered")]
-		public DateTime? Premiered
+		public DateTime? PremiereDate
 		{
 			get; set;
 		}
 
-		[JsonPropertyName("ended")]
-		public DateTime? Ended
+		public DateTime? EndDate
 		{
 			get; set;
 		}
 
-		[JsonPropertyName("summary")]
 		public string Summary
 		{
 			get; set;
@@ -63,7 +64,7 @@ namespace TvLookup.Core.Models
 		// TODO: Remove this, maybe.
 		public override string ToString()
 		{
-			return $"{Name} ({Premiered?.Year.ToString() ?? "unknown"}-{Ended?.Year})";
+			return $"{Title} ({PremiereDate?.Year.ToString() ?? "unknown"}-{EndDate?.Year})";
 		}
 	}
 }

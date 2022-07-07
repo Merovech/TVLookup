@@ -1,11 +1,11 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace TvLookup.Core.Models
+namespace TvLookup.Core.Models.Api
 {
 	/// <summary>
 	/// Search result returned by TVMaze when looking for a show by name.
 	/// </summary>
-	public class TvShowSearchResult
+	public class ApiTvShowSearchResult
 	{
 		[JsonPropertyName("score")]
 		public double Resultscore
@@ -14,7 +14,7 @@ namespace TvLookup.Core.Models
 		}
 
 		[JsonPropertyName("show")]
-		public TvShow Show
+		public ApiTvShow Show
 		{
 			get; set;
 		}

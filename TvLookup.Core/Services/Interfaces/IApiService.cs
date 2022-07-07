@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using TvLookup.Core.Models;
+using TvLookup.Core.Models.Api;
 
 namespace TvLookup.Core.Services.Interfaces
 {
@@ -10,8 +10,8 @@ namespace TvLookup.Core.Services.Interfaces
 	[DependencyInjectionType(DependencyInjectionType.Interface)]
 	public interface IApiService
 	{
-		Task<List<TvShow>> FindShow(string searchString);
+		Task<List<ApiTvShow>> FindShow(string searchString);
 
-		Task<List<TvShowEpisode>> GetEpisodes(int showId);
+		Task<List<ApiTvShowEpisode>> GetEpisodes(int showId);
 	}
 }
