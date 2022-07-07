@@ -74,9 +74,44 @@ namespace TvLookup.Core.UnitTests.Services
 			}
 		}
 
+		protected async Task<List<ApiTvShow>> InsertShows(int count, bool includeDuplicate)
+		{
+			var resultList = Builder.GenerateTvShows(count);
+			foreach (var show in resultList)
+			{
+				await Target.AddShow(show);
+			}
+
+			if (includeDuplicate)
+			{
+				await Target.AddShow(resultList.First());
+			}
+
+			return resultList;
+		}
+
+		protected async Task<List<ApiTvShowEpisode>> InsertEpisodes(int count, int showId, bool includeDuplicates)
+		{
+			var resultList = Builder.GenerateApiEpisodes(count);
+			if (includeDuplicates)
+			{
+				resultList.Add(resultList.First());
+			}
+
+			await Target.AddEpisodes(resultList, showId);
+			return resultList;
+		}
+
 		[TestClass]
 		public class AddShowTests : DatabaseServiceTests
 		{
+			[TestMethod]
+			[ExpectedException(typeof(ArgumentNullException))]
+			public async virtual Task Should_Throw_On_Null_Show()
+			{
+				await Target.AddShow(null);
+			}
+
 			[TestMethod]
 			public async virtual Task Should_Add_Successfully()
 			{
@@ -163,9 +198,30 @@ namespace TvLookup.Core.UnitTests.Services
 		public class GetShowTests : DatabaseServiceTests
 		{
 			[TestMethod]
+			[ExpectedException(typeof(ArgumentException))]
+			public async Task Should_Throw_For_Zero_Id()
+			{
+				await Target.GetShow(0);
+			}
+
+			[TestMethod]
+			[ExpectedException(typeof(ArgumentException))]
+			public async Task Should_Throw_For_Negative_Id()
+			{
+				await Target.GetShow(-1);
+			}
+
+			[TestMethod]
+			public async Task Should_Return_Null_For_Not_Found()
+			{
+				var result = await Target.GetShow(100);
+				Assert.IsNull(result, nameof(result));
+			}
+
+			[TestMethod]
 			public async Task Should_Return_Show_For_Valid_Inputs()
 			{
-				var expected = await InsertValidData(2);
+				var expected = await InsertShows(2, false);
 				for (int i = 0; i < expected.Count; i++)
 				{
 					var targetId = i + 10;
@@ -191,69 +247,155 @@ namespace TvLookup.Core.UnitTests.Services
 			}
 
 			[TestMethod]
-			public async Task Should_Return_Null_For_Not_Found()
+			[ExpectedException(typeof(InvalidOperationException))]
+			public async Task Should_Throw_When_Duplicate_Show_Is_Found()
 			{
-				var result = await Target.GetShow(100);
-				Assert.IsNull(result, nameof(result));
+				await InsertShows(1, true);
+				_ = await Target.GetShow(10);
+			}
+		}
+
+		[TestClass]
+		public class AddEpisodesTests : DatabaseServiceTests
+		{
+			[TestInitialize]
+			public override void InitializeTest()
+			{
+				base.InitializeTest();
+				Task.Run(async () => await InsertShows(3, false)).Wait();
+			}
+
+			[TestMethod]
+			[ExpectedException(typeof(ArgumentNullException))]
+			public async Task Should_Throw_On_List()
+			{
+				await Target.AddEpisodes(null, 10);
 			}
 
 			[TestMethod]
 			[ExpectedException(typeof(InvalidOperationException))]
-			public async Task Should_Throw_When_Duplicate_Show_Is_Found()
+			public async Task Should_Throw_On_Empty_List()
 			{
-				await InsertDuplicateData();
-				_ = await Target.GetShow(10);
+				await Target.AddEpisodes(new List<ApiTvShowEpisode>(), 10);
 			}
 
-			private async Task<List<ApiTvShow>> InsertValidData(int count)
+			[TestMethod]
+			[ExpectedException(typeof(InvalidOperationException))]
+			public async Task Should_Throw_On_Nonexistent_Show_Id()
 			{
-				List<ApiTvShow> result = new List<ApiTvShow>();
-				for (int i = 0; i < count; i++)
-				{
-					ApiTvShow show = new()
-					{
-						Id = i + 10,
-						Title = $"Title {i}",
-						PremiereDate = DateTime.Today.AddDays(-i),
-						EndDate = DateTime.Today,
-						Genres = new()
-					{
-						"Genre1",
-						"Genre2"
-					},
-						Language = "en",
-						Summary = $"Summary {i}",
-						Type = "Some Type"
-					};
+				var episode = Builder.GenerateApiEpisodes(1);
+				await Target.AddEpisodes(episode, 100000);
+			}
 
-					await Target.AddShow(show);
-					result.Add(show);
+			[TestMethod]
+			public async Task Should_Add_Episodes_Successfully()
+			{
+				var episodes = Builder.GenerateApiEpisodes(10).OrderBy(e => e.Id).ToList();
+				var show = Builder.Context.Shows.First();
+				await Target.AddEpisodes(episodes, show.ApiId);
+
+				var foundEpisodes = Builder.Context.Episodes.OrderBy(e => e.ApiId).ToList();
+				for (int i = 0; i < foundEpisodes.Count; i++)
+				{
+					var actualEpisode = foundEpisodes[i];
+					var expectedEpisode = episodes[i];
+					Assert.AreEqual(show.Id, actualEpisode.ShowId);
+					Assert.AreEqual(expectedEpisode.Id, actualEpisode.ApiId);
+					Assert.AreEqual(expectedEpisode.Title, actualEpisode.Title);
+					Assert.AreEqual(expectedEpisode.Summary, actualEpisode.Summary);
+					Assert.AreEqual(expectedEpisode.SeasonNumber, actualEpisode.SeasonNumber);
+					Assert.AreEqual(expectedEpisode.EpisodeNumber, actualEpisode.EpisodeNumber);
+					Assert.AreEqual(expectedEpisode.AirDate, actualEpisode.AirDate);
+					Assert.AreEqual(expectedEpisode.Type, actualEpisode.Type);
+					Assert.IsTrue(actualEpisode.Id > 0);
 				}
+			}
+		}
 
-				return result;
+		[TestClass]
+		public class GetEpisodesTests : DatabaseServiceTests
+		{
+			[TestMethod]
+			[DynamicData(nameof(GetInvalidParameterValidationData), DynamicDataSourceType.Method)]
+			[ExpectedException(typeof(ArgumentException))]
+			public async Task Show_Throw_When_Any_Parameter_Is_Less_Than_1(int showId, int seasonNumber, int episodeNumber)
+			{
+				await Target.GetEpisode(showId, seasonNumber, episodeNumber);
 			}
 
-			private async Task InsertDuplicateData()
-			{
-				List<ApiTvShow> result = new List<ApiTvShow>();
-				ApiTvShow show = new()
-				{
-					Id = 10,
-					Title = "Title",
-					PremiereDate = DateTime.Today.AddDays(-1),
-					EndDate = DateTime.Today,
-					Genres = new()
-					{
-						"Genre1",
-						"Genre2"
-					},
-					Language = "en",
-					Summary = "Summary",
-					Type = "Some Type"
-				};
 
-				await Target.AddShow(show);
-				await Target.AddShow(show);
+			[TestMethod]
+			public async Task Should_Return_Valid_Result_When_Episode_Exists()
+			{
+				await InsertShows(1, false);
+				var show = Builder.Context.Shows.First();
+				var episodes = await InsertEpisodes(5, show.ApiId, false);
+				var expectedEpisode = episodes.First();
+
+				var result = await Target.GetEpisode(show.Id, expectedEpisode.SeasonNumber, expectedEpisode.EpisodeNumber);
+				Assert.IsNotNull(result);
+				Assert.AreEqual(show.Id, result.ShowId);
+				Assert.AreEqual(expectedEpisode.SeasonNumber, result.SeasonNumber);
+				Assert.AreEqual(expectedEpisode.EpisodeNumber, result.EpisodeNumber);
+				Assert.AreEqual(expectedEpisode.Title, result.Title);
+				Assert.AreEqual(expectedEpisode.Summary, result.Summary);
+				Assert.AreEqual(expectedEpisode.Type, result.Type);
+				Assert.AreEqual(expectedEpisode.AirDate, result.AirDate);
+			}
+
+			[TestMethod]
+			[ExpectedException(typeof(InvalidOperationException))]
+			public async Task Should_Throw_When_Duplicate_Episode_Is_Found()
+			{
+				await InsertShows(1, false);
+				var show = Builder.Context.Shows.First();
+				var episodes = await InsertEpisodes(5, show.Id, true);
+				var expectedEpisode = episodes.First();
+
+				_ = await Target.GetEpisode(show.ApiId, expectedEpisode.SeasonNumber, expectedEpisode.EpisodeNumber);
+			}
+
+			[TestMethod]
+			[DynamicData(nameof(GetValidParameterData), DynamicDataSourceType.Method)]
+			public async Task Should_Return_Null_When_Episode_Is_Not_Found(int showId, int seasonNumber, int episodeNumber)
+			{
+				// We should get null whenever we passed in valid values for an item that's not in the database.
+				// This could be when a show doesn't exist, the season doesn't exist for the show, or the episode
+				// doesn't exist for the season.
+				await InsertShows(1, false);
+				var show = Builder.Context.Shows.First();
+				await InsertEpisodes(5, show.ApiId, false);
+
+				var result = await Target.GetEpisode(showId, seasonNumber, episodeNumber);
+				Assert.IsNull(result);
+
+			}
+
+			// With three parameters, sometimes testing multiple values, DynamicData prevents us from having to write
+			// a billion tiny tests.
+			private static IEnumerable<object[]> GetInvalidParameterValidationData()
+			{
+				return new List<object[]>()
+				{
+					// Format: { showId, seasonNumber, episodeNumber }
+					new object[] { 0, 1, 1 },
+					new object[] { -1, 1, 1 },
+					new object[] { 1, 0, 1 },
+					new object[] { 1, -1, 1 },
+					new object[] { 1, 1, 0 },
+					new object[] { 1, 1, -1 }
+				};
+			}
+
+			private static IEnumerable<object[]> GetValidParameterData()
+			{
+				return new List<object[]>()
+				{
+					// Format { showId, seasonNumber, episodeNumber }
+					new object[] { 100, 1, 1},
+					new object[] { 10, 100, 1},
+					new object[] { 10, 1, 100}
+				};
 			}
 		}
 	}

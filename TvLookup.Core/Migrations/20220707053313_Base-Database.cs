@@ -5,29 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TvLookup.Core.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class BaseDatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Episodes",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    ApiId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Title = table.Column<string>(type: "TEXT", nullable: true),
-                    SeasonNumber = table.Column<int>(type: "INTEGER", nullable: false),
-                    EpisodeNumber = table.Column<int>(type: "INTEGER", nullable: false),
-                    Type = table.Column<string>(type: "TEXT", nullable: true),
-                    AirDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Summary = table.Column<string>(type: "TEXT", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Episodes", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Genres",
                 columns: table => new
@@ -61,6 +42,32 @@ namespace TvLookup.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Episodes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ApiId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ShowId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Title = table.Column<string>(type: "TEXT", nullable: true),
+                    SeasonNumber = table.Column<int>(type: "INTEGER", nullable: false),
+                    EpisodeNumber = table.Column<int>(type: "INTEGER", nullable: false),
+                    Type = table.Column<string>(type: "TEXT", nullable: true),
+                    AirDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Summary = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Episodes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Episodes_Shows_ShowId",
+                        column: x => x.ShowId,
+                        principalTable: "Shows",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TvShowGenre",
                 columns: table => new
                 {
@@ -83,6 +90,11 @@ namespace TvLookup.Core.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Episodes_ShowId",
+                table: "Episodes",
+                column: "ShowId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TvShowGenre_GenreId",

@@ -100,7 +100,7 @@ namespace TvLookup.UI
 
 			// We can do this in one loop, using the larger of the interface and other lists as our counter.
 			// We're taking advantage of the fact that interfaces and implementations should have the same name,
-			// on with an I prefix on the interface.  So they can be done in parallel.
+			// one with an I prefix on the interface, so they can be done in parallel.
 			int i = 0;
 			while (i < interfaceList.Count || i < singletonList.Count || i < otherList.Count)
 			{

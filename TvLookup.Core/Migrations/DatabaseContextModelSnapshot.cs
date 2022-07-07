@@ -81,6 +81,9 @@ namespace TvLookup.Core.Migrations
                     b.Property<int>("SeasonNumber")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("ShowId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Summary")
                         .HasColumnType("TEXT");
 
@@ -91,6 +94,8 @@ namespace TvLookup.Core.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ShowId");
 
                     b.ToTable("Episodes", (string)null);
                 });
@@ -108,6 +113,17 @@ namespace TvLookup.Core.Migrations
                     b.HasIndex("GenreId");
 
                     b.ToTable("TvShowGenre");
+                });
+
+            modelBuilder.Entity("TvLookup.Core.Models.TvShowEpisode", b =>
+                {
+                    b.HasOne("TvLookup.Core.Models.TvShow", "Show")
+                        .WithMany()
+                        .HasForeignKey("ShowId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Show");
                 });
 
             modelBuilder.Entity("TvLookup.Core.Models.TvShowGenre", b =>

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -28,9 +29,18 @@ namespace TvLookup.Core.Services.Implementations
 
 		public async Task AddEpisodes(IList<ApiTvShowEpisode> episodes, int showId)
 		{
+			Guard.AgainstNullOrEmptyList(episodes, nameof(episodes));
+			Guard.AgainstValuesLessThan(1, showId, nameof(showId));
+
+			var show = await GetShow(showId);
+			if (show == null)
+			{
+				throw new InvalidOperationException($"Show with ID of {showId} was not found in the database.");
+			}
+
 			foreach (var ep in episodes)
 			{
-				var converted = ConvertEpisode(ep, showId);
+				var converted = ConvertEpisode(ep, show.Id);
 				_dbContext.Episodes.Add(converted);
 			}
 
@@ -39,9 +49,33 @@ namespace TvLookup.Core.Services.Implementations
 
 		public async Task AddShow(ApiTvShow show)
 		{
+			Guard.AgainstNull(show, nameof(show));
+
 			var convertedShow = ConvertApiShow(show);
 			_dbContext.Add(convertedShow);
 			await _dbContext.SaveChangesAsync();
+		}
+
+		public async Task<TvShowEpisode> GetEpisode(int showId, int seasonNumber, int episodeNumber)
+		{
+			Guard.AgainstValuesLessThan(1, showId, nameof(showId));
+			Guard.AgainstValuesLessThan(1, seasonNumber, nameof(seasonNumber));
+			Guard.AgainstValuesLessThan(1, episodeNumber, nameof(episodeNumber));
+
+			return await _dbContext
+				.Episodes
+				.Where(e => e.ShowId == showId && e.SeasonNumber == seasonNumber && e.EpisodeNumber == episodeNumber)
+				.SingleOrDefaultAsync();
+		}
+
+		public async Task<TvShow> GetShow(int showId)
+		{
+			Guard.AgainstValuesLessThan(1, showId, nameof(showId));
+
+			return await _dbContext
+				.Shows
+				.Where(s => s.ApiId == showId)
+				.SingleOrDefaultAsync();
 		}
 
 		public async Task CreateDatabase()
@@ -52,22 +86,6 @@ namespace TvLookup.Core.Services.Implementations
 			await _dbContext.Database.OpenConnectionAsync();
 			await _dbContext.Database.ExecuteSqlRawAsync("PRAGMA journal_mode=DELETE");
 			await _dbContext.Database.CloseConnectionAsync();
-		}
-
-		public async Task<TvShowEpisode> GetEpisode(int showId, int seasonNumber, int episodeNumber)
-		{
-			return await _dbContext
-				.Episodes
-				.Where(e => e.ShowId == showId && e.SeasonNumber == seasonNumber && e.EpisodeNumber == episodeNumber)
-				.SingleOrDefaultAsync();
-		}
-
-		public async Task<TvShow> GetShow(int showId)
-		{
-			return await _dbContext
-				.Shows
-				.Where(s => s.ApiId == showId)
-				.SingleOrDefaultAsync();
 		}
 
 		private TvShowEpisode ConvertEpisode(ApiTvShowEpisode episode, int showId)
